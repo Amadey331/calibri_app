@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AddapiWindow</class>
+ <widget class="QDialog" name="AddapiWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>240</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>240</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>500</width>
+    <height>240</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color:#161616;
+font-family:Eirik Raudel;
+</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLineEdit" name="line_binanceAPI_edit">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color:#FFFFFF;
+font-weight:bold;
+font-size:17px;
+border:1px solid rgba(255,255,255,100);</string>
+       </property>
+       <property name="placeholderText">
+        <string comment="Binance" extracomment="Binance">Binance API</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="line_binanceSecretkey_edit">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color:#FFFFFF;
+font-weight:bold;
+font-size:17px;
+border:1px solid rgba(255,255,255,100);</string>
+       </property>
+       <property name="placeholderText">
+        <string>Binance Secret Key</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="line_bybitAPI_edit">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color:#FFFFFF;
+font-weight:bold;
+font-size:17px;
+border:1px solid rgba(255,255,255,100);</string>
+       </property>
+       <property name="placeholderText">
+        <string>Bybit API</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="line_bybitSecretkey_edit">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color:#FFFFFF;
+font-weight:bold;
+font-size:17px;
+border:1px solid rgba(255,255,255,100);</string>
+       </property>
+       <property name="placeholderText">
+        <string>Bybit Secret Key</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item alignment="Qt::AlignHCenter">
+    <widget class="QPushButton" name="bt_add_api">
+     <property name="minimumSize">
+      <size>
+       <width>150</width>
+       <height>35</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>150</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+color:#FFFFFF;
+font-weight:bold;
+background-color:#202020;
+border:2px solid rgba(103,103,101,100);
+border-radius:10px;
+margin-left:7px;
+font-size:20px;
+font-stretch:expanded ;
+}
+
+
+QPushButton:hover{
+background-color:#313131;
+border:2px solid rgba(103,103,101,40);
+}
+
+QPushButton:pressed{
+background-color:#3D3B3B;
+border:2px solid rgba(103,103,101,70);
+}</string>
+     </property>
+     <property name="text">
+      <string>Добавить</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

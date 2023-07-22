@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AddbotWindow</class>
+ <widget class="QDialog" name="AddbotWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>840</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Calibri:addBot</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color:#161616;
+font-family:Eirik Raudel;
+
+</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QFrame" name="main_frame">
+     <property name="styleSheet">
+      <string notr="true">background-color:#1E1E1E;
+</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_8">
+      <item>
+       <widget class="QGroupBox" name="upper_box">
+        <property name="styleSheet">
+         <string notr="true">background-color:rgba(30,30,30,100);
+border:2px solid rgba(255,255,255,20);
+border-radius:7px;</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="add_bot_text">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color:rgba(255,255,255,1);
+font-weight:bold;
+font-size:25px;
+background-color:rgba(255,255,255,20);
+border:none;
+border-radius:7px;</string>
+           </property>
+           <property name="text">
+            <string>Добавление бота</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="name_tool_line">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item alignment="Qt::AlignVCenter">
+            <widget class="QLabel" name="name_tool_text">
+             <property name="maximumSize">
+              <size>
+               <width>250</width>
+               <height>23</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color:#CAC9C8;
+font-weight:bold;
+font-size:20px;
+border:none;</string>
+             </property>
+             <property name="text">
+              <string>Название инструмента:</string>
+             </property>
+            </widget>
+           </item>
+           <item alignment="Qt::AlignLeft">
+            <widget class="QLineEdit" name="name_tool_enter">
+             <property name="maximumSize">
+              <size>
+               <width>150</width>
+               <height>23</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color:#FFFFFF;
+font-weight:bold;
+font-size:17px;
+border:1px solid rgba(255,255,255,100);</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="Info_stratege_line">
+           <item>
+            <widget class="QLabel" name="info_stratege_text">
+             <property name="minimumSize">
+              <size>
+               <width>222</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>222</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color:#CAC9C8;
+font-weight:bold;
+font-size:20px;
+border:none;</string>
+             </property>
+             <property name="text">
+              <string>Описание стратегии:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="info_stratege_enter">
+             <property name="minimumSize">
+              <size>
+               <width>550</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>23</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color:#FFFFFF;
+font-weight:bold;
+font-size:17px;
+border:1px solid rgba(255,255,255,100);</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="balance_line">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="balance_text">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>85</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color:#CAC9C8;
+font-weight:bold;
+font-size:20px;
+border:none;</string>
+             </property>
+             <property name="text">
+              <string>Баланс:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item alignment="Qt::AlignLeft">
+            <widget class="QLineEdit" name="balance_enter">
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color:#FFFFFF;
+font-weight:bold;
+font-size:17px;
+border:1px solid rgba(255,255,255,100);</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="file_input_line">
+           <item>
+            <widget class="QLabel" name="file_input_text">
+             <property name="maximumSize">
+              <size>
+               <width>230</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color:#CAC9C8;
+font-weight:bold;
+font-size:20px;
+border:none;</string>
+             </property>
+             <property name="text">
+              <string>Загрузить файл бота:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit">
+             <property name="maximumSize">
+              <size>
+               <width>150</width>
+               <height>23</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color:#FFFFFF;
+font-weight:bold;
+font-size:17px;
+border:1px solid rgba(255,255,255,100);
+
+margin-right:5px;</string>
+             </property>
+            </widget>
+           </item>
+           <item alignment="Qt::AlignLeft">
+            <widget class="QPushButton" name="bt_file_input_enter">
+             <property name="minimumSize">
+              <size>
+               <width>150</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>180</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton{
+color:#CAC9C8;
+font-weight:bold;
+background-color:rgba(23, 33, 43,100);
+border:2px solid rgba(103,103,101,20);
+border-radius:10px;
+}
+
+
+QPushButton:hover{
+background-color:#222931;
+
+border:2px solid rgba(103,103,101,40);
+}
+
+QPushButton:pressed{
+background-color:#222B36;
+border:2px solid rgba(103,103,101,70);
+}
+</string>
+             </property>
+             <property name="text">
+              <string>Открыть файл</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QComboBox" name="select_item">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>150</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color:#CAC9C8;
+font-weight:bold;
+border:1px solid rgba(255,255,255,100);</string>
+           </property>
+           <item>
+            <property name="text">
+             <string>Futures-USDT</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>SPOT</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="select_burse">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>150</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color:#CAC9C8;
+font-weight:bold;
+border:1px solid rgba(255,255,255,100);</string>
+           </property>
+           <item>
+            <property name="text">
+             <string>Binance</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Bybit</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item alignment="Qt::AlignHCenter">
+    <widget class="QPushButton" name="bt_add_bot_secondWd">
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>300</width>
+       <height>35</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+color:#CAC9C8;
+font-weight:bold;
+background-color:#202020;
+border:2px solid rgba(103,103,101,100);
+border-radius:10px;
+margin-left:7px;
+font-size:25px;
+font-stretch:expanded ;
+}
+
+
+QPushButton:hover{
+background-color:#313131;
+border:2px solid rgba(103,103,101,40);
+}
+
+QPushButton:pressed{
+background-color:#3D3B3B;
+border:2px solid rgba(103,103,101,70);
+}
+</string>
+     </property>
+     <property name="text">
+      <string>Создать</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
