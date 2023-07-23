@@ -111,6 +111,7 @@ class MainWindow(QMainWindow):
 
 
     def add_newBot(self):
+        # Записть в базу данных
         date = str(datetime.now())[:16]
         name_inst = self.ui_window.name_tool_enter.text()
         info_strategies = self.ui_window.info_stratege_enter.text()
@@ -121,7 +122,13 @@ class MainWindow(QMainWindow):
 
         self.conn.add_new_bot_toDB(date, name_inst, info_strategies, balance_bot, file_derictory, type_burse, name_burse)
 
+        self.ui.create_widget_bot(date, name_inst, info_strategies, balance_bot, file_derictory, type_burse, name_burse)
+
+        
+        
+
         self.new_window.close()
+
 
 
 

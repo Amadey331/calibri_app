@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'v1.ui'
+## Form generated from reading UI file 'exemple_bot.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.1
 ##
@@ -15,16 +15,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
-    QMainWindow, QPushButton, QScrollArea, QSizePolicy,
-    QVBoxLayout, QWidget,QTableView, QGroupBox, QTextBrowser)
+from PySide6.QtWidgets import (QApplication, QFrame, QGroupBox, QHBoxLayout,
+    QHeaderView, QLabel, QMainWindow, QPushButton,
+    QScrollArea, QSizePolicy, QTableView, QTextBrowser,
+    QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.setWindowIcon(QIcon("img\icon4.png"))
-        MainWindow.resize(1043, 720)
+        MainWindow.resize(1236, 720)
         MainWindow.setMinimumSize(QSize(800, 720))
         MainWindow.setCursor(QCursor(Qt.ArrowCursor))
         MainWindow.setStyleSheet(u"background-color:#1E1E1E;\n"
@@ -34,147 +34,14 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout_main = QVBoxLayout()
-        self.verticalLayout_main.setObjectName(u"verticalLayout_main")
-        self.scrollArea = QScrollArea(self.centralwidget)
-        self.scrollArea.setObjectName(u"scrollArea")
-        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea_bot = QScrollArea(self.centralwidget)
+        self.scrollArea_bot.setObjectName(u"scrollArea_bot")
+        self.scrollArea_bot.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 1021, 642))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 1216, 644))
         self.verticalLayout_2 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-
-        self.verticalLayout_main.addWidget(self.scrollArea)
-
-        self.lower_panel = QFrame(self.centralwidget)
-        self.lower_panel.setObjectName(u"lower_panel")
-        self.lower_panel.setMinimumSize(QSize(0, 35))
-        self.lower_panel.setStyleSheet(u"background-color:#161616;\n"
-"")
-        self.horizontalLayout = QHBoxLayout(self.lower_panel)
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.horizontalLayout.setContentsMargins(2, -1, -1, -1)
-        self.bt_add_bot = QPushButton(self.lower_panel)
-        self.bt_add_bot.setObjectName(u"bt_add_bot")
-        self.bt_add_bot.setMinimumSize(QSize(0, 32))
-        self.bt_add_bot.setMaximumSize(QSize(125, 30))
-        font = QFont()
-        font.setFamilies([u"Eirik Raudel"])
-        font.setBold(True)
-        self.bt_add_bot.setFont(font)
-        self.bt_add_bot.setStyleSheet(u"QPushButton{\n"
-"color:#FFFFFF;\n"
-"font-weight:bold;\n"
-"background-color:#202020;\n"
-"border:2px solid rgba(103,103,101,20);\n"
-"border-radius:10px;\n"
-"margin-left:7px;\n"
-"}\n"
-"\n"
-"\n"
-"QPushButton:hover{\n"
-"background-color:#313131;\n"
-"border:2px solid rgba(103,103,101,40);\n"
-"}\n"
-"\n"
-"QPushButton:pressed{\n"
-"background-color:#3D3B3B;\n"
-"border:2px solid rgba(103,103,101,70);\n"
-"}\n"
-"")
-
-        self.horizontalLayout.addWidget(self.bt_add_bot)
-
-        self.bt_add_API = QPushButton(self.lower_panel)
-        self.bt_add_API.setObjectName(u"bt_add_API")
-        self.bt_add_API.setMinimumSize(QSize(0, 32))
-        self.bt_add_API.setMaximumSize(QSize(150, 30))
-        self.bt_add_API.setStyleSheet(u"QPushButton{\n"
-"color:#FFFFFF;\n"
-"font-weight:bold;\n"
-"background-color:rgba(23, 33, 43,100);\n"
-"border:2px solid rgba(103,103,101,20);\n"
-"border-radius:10px;\n"
-"}\n"
-"\n"
-"\n"
-"QPushButton:hover{\n"
-"background-color:#222931;\n"
-"\n"
-"border:2px solid rgba(103,103,101,40);\n"
-"}\n"
-"\n"
-"QPushButton:pressed{\n"
-"background-color:#222B36;\n"
-"border:2px solid rgba(103,103,101,70);\n"
-"}\n"
-"")
-
-        self.horizontalLayout.addWidget(self.bt_add_API)
-
-        self.line_2 = QFrame(self.lower_panel)
-        self.line_2.setObjectName(u"line_2")
-        self.line_2.setFrameShape(QFrame.VLine)
-        self.line_2.setFrameShadow(QFrame.Sunken)
-
-        self.horizontalLayout.addWidget(self.line_2)
-
-        self.balance_acc = QLabel(self.lower_panel)
-        self.balance_acc.setObjectName(u"balance_acc")
-        self.balance_acc.setMinimumSize(QSize(150, 30))
-        self.balance_acc.setLayoutDirection(Qt.LeftToRight)
-        self.balance_acc.setAutoFillBackground(False)
-        self.balance_acc.setStyleSheet(u"color:#FFFFFF;\n"
-"font-weight:bold;")
-        self.balance_acc.setAlignment(Qt.AlignCenter)
-
-        self.horizontalLayout.addWidget(self.balance_acc, 0, Qt.AlignRight)
-
-        self.line_for_balance_system = QFrame(self.lower_panel)
-        self.line_for_balance_system.setObjectName(u"line_for_balance_system")
-        self.line_for_balance_system.setFrameShape(QFrame.VLine)
-        self.line_for_balance_system.setFrameShadow(QFrame.Sunken)
-
-        self.horizontalLayout.addWidget(self.line_for_balance_system)
-
-        self.system_info = QLabel(self.lower_panel)
-        self.system_info.setObjectName(u"system_info")
-        self.system_info.setMinimumSize(QSize(100, 25))
-        self.system_info.setMaximumSize(QSize(150, 25))
-        self.system_info.setStyleSheet(u"color:#FFFFFF;\n"
-"font-weight:bold;")
-
-        self.horizontalLayout.addWidget(self.system_info, 0, Qt.AlignVCenter)
-
-
-        self.verticalLayout_main.addWidget(self.lower_panel)
-
-
-        self.verticalLayout.addLayout(self.verticalLayout_main)
-
-        MainWindow.setCentralWidget(self.centralwidget)
-
-        self.retranslateUi(MainWindow)
-
-        QMetaObject.connectSlotsByName(MainWindow)
-    
-    # Функция для добавления бота в скрол ареа в качестве виджета
-    
-# /////////////////////////////////////////////////////////////////////////////////////
-# /////////////////////////////////////////////////////////////////////////////////////
-# /////////////////////////////////////////////////////////////////////////////////////
-# /////////////////////////////////////////////////////////////////////////////////////
-# /////////////////////////////////////////////////////////////////////////////////////    
-# /////////////////////////////////////////////////////////////////////////////////////
-# /////////////////////////////////////////////////////////////////////////////////////
-# /////////////////////////////////////////////////////////////////////////////////////
-# /////////////////////////////////////////////////////////////////////////////////////
-# /////////////////////////////////////////////////////////////////////////////////////
-    
-    def create_widget_bot(self, date, name_inst, info_strategies, balance_bot, file_derictory, type_burse, name_burse):
-
         self.bot_widget = QWidget(self.scrollAreaWidgetContents)
         self.bot_widget.setObjectName(u"bot_widget")
         self.bot_widget.setMinimumSize(QSize(0, 350))
@@ -213,9 +80,9 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_4.addWidget(self.inst_name)
 
-        self.label_type_burse = QLabel(self.horizontalFrame_instName)
-        self.label_type_burse.setObjectName(u"label")
-        self.label_type_burse.setStyleSheet(u"color:rgba(255,255,255,1);\n"
+        self.label = QLabel(self.horizontalFrame_instName)
+        self.label.setObjectName(u"label")
+        self.label.setStyleSheet(u"color:rgba(255,255,255,1);\n"
 "font-weight:bold;\n"
 "font-size:15px;\n"
 "background-color:None;\n"
@@ -223,11 +90,11 @@ class Ui_MainWindow(object):
 "border:none;\n"
 "border-radius:7px;")
 
-        self.horizontalLayout_4.addWidget(self.label_type_burse)
+        self.horizontalLayout_4.addWidget(self.label)
 
-        self.label_name_burse = QLabel(self.horizontalFrame_instName)
-        self.label_name_burse.setObjectName(u"label_2")
-        self.label_name_burse.setStyleSheet(u"color:rgba(255,255,255,1);\n"
+        self.label_2 = QLabel(self.horizontalFrame_instName)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setStyleSheet(u"color:rgba(255,255,255,1);\n"
 "font-weight:bold;\n"
 "font-size:15px;\n"
 "background-color:None;\n"
@@ -235,7 +102,7 @@ class Ui_MainWindow(object):
 "border:none;\n"
 "border-radius:7px;")
 
-        self.horizontalLayout_4.addWidget(self.label_name_burse)
+        self.horizontalLayout_4.addWidget(self.label_2)
 
         self.frame = QFrame(self.horizontalFrame_instName)
         self.frame.setObjectName(u"frame")
@@ -443,43 +310,142 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addWidget(self.bot_widget)
 
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.scrollArea_bot.setWidget(self.scrollAreaWidgetContents)
 
-        self.inst_name.setText(QCoreApplication.translate("MainWindow", f"{name_inst}", None))
-        self.label_type_burse.setText(QCoreApplication.translate("MainWindow", f"{type_burse}", None))
-        self.label_name_burse.setText(QCoreApplication.translate("MainWindow", f"{name_burse}", None))
-        self.balance_bot_now.setText(QCoreApplication.translate("MainWindow", f"{balance_bot} $", None))
-        self.balance_bot_be.setText(QCoreApplication.translate("MainWindow", f"{balance_bot} $", None))
-        # self.date_info.setText(QCoreApplication.translate("MainWindow", u"\u0414\u0430\u0442\u0430 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0438\u044f:14.02.2022", None))
-        self.date_info.setText(QCoreApplication.translate("MainWindow", f"{date}", None))
+        self.verticalLayout.addWidget(self.scrollArea_bot)
+
+        self.lower_panel = QFrame(self.centralwidget)
+        self.lower_panel.setObjectName(u"lower_panel")
+        self.lower_panel.setMinimumSize(QSize(0, 35))
+        self.lower_panel.setStyleSheet(u"background-color:#161616;\n"
+"")
+        self.horizontalLayout = QHBoxLayout(self.lower_panel)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(2, -1, -1, -1)
+        self.bt_add_bot = QPushButton(self.lower_panel)
+        self.bt_add_bot.setObjectName(u"bt_add_bot")
+        self.bt_add_bot.setMinimumSize(QSize(0, 32))
+        self.bt_add_bot.setMaximumSize(QSize(125, 30))
+        font = QFont()
+        font.setFamilies([u"Eirik Raudel"])
+        font.setBold(True)
+        self.bt_add_bot.setFont(font)
+        self.bt_add_bot.setStyleSheet(u"QPushButton{\n"
+"color:#FFFFFF;\n"
+"font-weight:bold;\n"
+"background-color:#202020;\n"
+"border:2px solid rgba(103,103,101,20);\n"
+"border-radius:10px;\n"
+"margin-left:7px;\n"
+"}\n"
+"\n"
+"\n"
+"QPushButton:hover{\n"
+"background-color:#313131;\n"
+"border:2px solid rgba(103,103,101,40);\n"
+"}\n"
+"\n"
+"QPushButton:pressed{\n"
+"background-color:#3D3B3B;\n"
+"border:2px solid rgba(103,103,101,70);\n"
+"}\n"
+"")
+
+        self.horizontalLayout.addWidget(self.bt_add_bot)
+
+        self.bt_add_API = QPushButton(self.lower_panel)
+        self.bt_add_API.setObjectName(u"bt_add_API")
+        self.bt_add_API.setMinimumSize(QSize(0, 32))
+        self.bt_add_API.setMaximumSize(QSize(150, 30))
+        self.bt_add_API.setStyleSheet(u"QPushButton{\n"
+"color:#FFFFFF;\n"
+"font-weight:bold;\n"
+"background-color:rgba(23, 33, 43,100);\n"
+"border:2px solid rgba(103,103,101,20);\n"
+"border-radius:10px;\n"
+"}\n"
+"\n"
+"\n"
+"QPushButton:hover{\n"
+"background-color:#222931;\n"
+"\n"
+"border:2px solid rgba(103,103,101,40);\n"
+"}\n"
+"\n"
+"QPushButton:pressed{\n"
+"background-color:#222B36;\n"
+"border:2px solid rgba(103,103,101,70);\n"
+"}\n"
+"")
+
+        self.horizontalLayout.addWidget(self.bt_add_API)
+
+        self.line_2 = QFrame(self.lower_panel)
+        self.line_2.setObjectName(u"line_2")
+        self.line_2.setFrameShape(QFrame.VLine)
+        self.line_2.setFrameShadow(QFrame.Sunken)
+
+        self.horizontalLayout.addWidget(self.line_2)
+
+        self.balance_acc = QLabel(self.lower_panel)
+        self.balance_acc.setObjectName(u"balance_acc")
+        self.balance_acc.setMinimumSize(QSize(150, 30))
+        self.balance_acc.setLayoutDirection(Qt.LeftToRight)
+        self.balance_acc.setAutoFillBackground(False)
+        self.balance_acc.setStyleSheet(u"color:#FFFFFF;\n"
+"font-weight:bold;")
+        self.balance_acc.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout.addWidget(self.balance_acc, 0, Qt.AlignRight)
+
+        self.line_for_balance_system = QFrame(self.lower_panel)
+        self.line_for_balance_system.setObjectName(u"line_for_balance_system")
+        self.line_for_balance_system.setFrameShape(QFrame.VLine)
+        self.line_for_balance_system.setFrameShadow(QFrame.Sunken)
+
+        self.horizontalLayout.addWidget(self.line_for_balance_system)
+
+        self.system_info = QLabel(self.lower_panel)
+        self.system_info.setObjectName(u"system_info")
+        self.system_info.setMinimumSize(QSize(100, 25))
+        self.system_info.setMaximumSize(QSize(150, 25))
+        self.system_info.setStyleSheet(u"color:#FFFFFF;\n"
+"font-weight:bold;")
+
+        self.horizontalLayout.addWidget(self.system_info, 0, Qt.AlignVCenter)
+
+
+        self.verticalLayout.addWidget(self.lower_panel)
+
+        MainWindow.setCentralWidget(self.centralwidget)
+
+        self.retranslateUi(MainWindow)
+
+        QMetaObject.connectSlotsByName(MainWindow)
+    # setupUi
+
+    def retranslateUi(self, MainWindow):
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Calibri ", None))
+        self.inst_name.setText(QCoreApplication.translate("MainWindow", u"DOGEUSDT", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"SPOT", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"binance", None))
+        self.balance_bot_now.setText(QCoreApplication.translate("MainWindow", u"100 $", None))
+        self.balance_bot_be.setText(QCoreApplication.translate("MainWindow", u"120$", None))
+        self.date_info.setText(QCoreApplication.translate("MainWindow", u"\u0414\u0430\u0442\u0430 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0438\u044f:14.02.2022", None))
 #if QT_CONFIG(whatsthis)
         self.Info_strat_line.setWhatsThis(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><br/></p></body></html>", None))
 #endif // QT_CONFIG(whatsthis)
-        self.Info_strat_line.setHtml(QCoreApplication.translate("MainWindow", f"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.Info_strat_line.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "hr { height: 1px; border-width: 0; }\n"
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Eirik Raudel'; font-size:15px; font-weight:400; font-style:normal;\">\n"
-f"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:15px; font-weight:bold; color:#ffffff;\">{info_strategies}</span></p></body></html>", None))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:15px; color:#ffffff;\">sss</span></p></body></html>", None))
         self.bt_start.setText(QCoreApplication.translate("MainWindow", u"\u0417\u0430\u043f\u0443\u0441\u0442\u0438\u0442\u044c", None))
         self.bt_update.setText(QCoreApplication.translate("MainWindow", u"\u041e\u0431\u043d\u043e\u0432\u0438\u0442\u044c", None))
         self.bt_delete.setText(QCoreApplication.translate("MainWindow", u"\u0423\u0434\u0430\u043b\u0438\u0442\u044c", None))
-    
-    
-# /////////////////////////////////////////////////////////////////////////////////////
-# /////////////////////////////////////////////////////////////////////////////////////
-# /////////////////////////////////////////////////////////////////////////////////////
-# /////////////////////////////////////////////////////////////////////////////////////
-# /////////////////////////////////////////////////////////////////////////////////////
-
-    
-    
-    # setupUi
-
-    def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Calibri ", None))
         self.bt_add_bot.setText(QCoreApplication.translate("MainWindow", u"\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0431\u043e\u0442\u0430", None))
         self.bt_add_API.setText(QCoreApplication.translate("MainWindow", u"\u0423\u043a\u0430\u0437\u0430\u0442\u044c AIP \u043a\u043b\u044e\u0447", None))
         self.balance_acc.setText(QCoreApplication.translate("MainWindow", u"\u0411\u0430\u043b\u0430\u043d\u0441: 200 $", None))
