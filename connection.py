@@ -36,16 +36,39 @@ class Data:
         
         query.exec()
         return query
+    
+    # def execute_read_query(self, sql_query):
+    #     query = QtSql.QSqlQuery()
+    #     result = None
+    #     try:
+    #         query.prepare(sql_query)
+    #         result = query
+    #         return result
+    #     except Error as e:
+    #         print(f"The error '{e}' occurred")
 
+
+    def get_all_data(self):
+        sql_query = "SELECT * FROM BOTS_INFO"
+        query = self.execute_query_with_params(sql_query)
+        
+        list_bots = []
+        while query.next():
+            res = []
+            for valId in range (1,8):
+                res.append(query.value(valId))
+            list_bots.append(res)
+        return(list_bots)
+        
     # Запрос для добавлнения бота
     def add_new_bot_toDB(self,date, name_inst, info_strategies, balance_bot, file_derectory, type_burse, name_burse):
         sql_query = "INSERT INTO BOTS_INFO (Date, Name_inst, Info_strategies, Balance_bot, File_directory, Type_burse, Name_burse) VALUES(?, ?, ?, ?, ?, ?, ?)"
         self.execute_query_with_params(sql_query, [date, name_inst, info_strategies, balance_bot, file_derectory, type_burse, name_burse])
 
     # Запрос для удаление бота
-    def delete_bot(self,id):
-        sql_query = "DELETE FROM BOTS_INFO WHERE ID=?"
-        self.execute_query_with_params(sql_query, [id])
+    def delete_bot(self,name_inst):
+        sql_query = "DELETE FROM BOTS_INFO WHERE Name_inst=?"
+        self.execute_query_with_params(sql_query, [name_inst])
 
     # Запрос для выведения сумарного баланса ботов
     def get_total_balance_bots(self):
