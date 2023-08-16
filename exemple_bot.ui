@@ -305,7 +305,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                   </layout>
                  </item>
                  <item>
-                  <widget class="QGroupBox" name="verticalGroupBox_right">
+                  <widget class="QFrame" name="verticalFrame_right">
                    <property name="maximumSize">
                     <size>
                      <width>600</width>
@@ -320,13 +320,310 @@ li.checked::marker { content: &quot;\2612&quot;; }
                      <number>3</number>
                     </property>
                     <item>
-                     <widget class="QTableView" name="tableView_stratInfo">
-                      <property name="styleSheet">
-                       <string notr="true">border:none;</string>
+                     <widget class="QFrame" name="verticalFrame_Info_start">
+                      <property name="maximumSize">
+                       <size>
+                        <width>515</width>
+                        <height>16777215</height>
+                       </size>
                       </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_4">
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_time">
+                         <item alignment="Qt::AlignHCenter|Qt::AlignTop">
+                          <widget class="QLabel" name="label_to_days">
+                           <property name="minimumSize">
+                            <size>
+                             <width>0</width>
+                             <height>30</height>
+                            </size>
+                           </property>
+                           <property name="maximumSize">
+                            <size>
+                             <width>16777215</width>
+                             <height>30</height>
+                            </size>
+                           </property>
+                           <property name="styleSheet">
+                            <string notr="true">color:rgba(255,255,255,1);
+font-weight:bold;
+font-size:15px;
+background-color:None;
+margin-left:4px;
+margin-bottom:10px;
+border:none;
+border-radius:7px;</string>
+                           </property>
+                           <property name="text">
+                            <string>За день</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="Line" name="line_8">
+                           <property name="orientation">
+                            <enum>Qt::Vertical</enum>
+                           </property>
+                          </widget>
+                         </item>
+                         <item alignment="Qt::AlignHCenter">
+                          <widget class="QLabel" name="label_all_time">
+                           <property name="minimumSize">
+                            <size>
+                             <width>0</width>
+                             <height>30</height>
+                            </size>
+                           </property>
+                           <property name="maximumSize">
+                            <size>
+                             <width>16777215</width>
+                             <height>30</height>
+                            </size>
+                           </property>
+                           <property name="styleSheet">
+                            <string notr="true">color:rgba(255,255,255,1);
+font-weight:bold;
+font-size:15px;
+background-color:None;
+margin-left:4px;
+margin-bottom:10px;
+border:none;
+border-radius:7px;</string>
+                           </property>
+                           <property name="text">
+                            <string>За всё время</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <widget class="Line" name="line">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                        </widget>
+                       </item>
+                       <item alignment="Qt::AlignHCenter">
+                        <widget class="QLabel" name="label_deals">
+                         <property name="maximumSize">
+                          <size>
+                           <width>16777215</width>
+                           <height>30</height>
+                          </size>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">color:rgba(255,255,255,1);
+font-weight:bold;
+font-size:15px;
+background-color:None;
+margin-left:4px;
+border:none;
+border-radius:7px;</string>
+                         </property>
+                         <property name="text">
+                          <string>Сделки</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_deals">
+                         <item alignment="Qt::AlignHCenter">
+                          <widget class="QLabel" name="label_deals_days">
+                           <property name="maximumSize">
+                            <size>
+                             <width>16777215</width>
+                             <height>30</height>
+                            </size>
+                           </property>
+                           <property name="styleSheet">
+                            <string notr="true">color:rgba(255,255,255,1);
+font-weight:bold;
+font-size:15px;
+background-color:None;
+margin-left:4px;
+border:none;
+border-radius:7px;</string>
+                           </property>
+                           <property name="text">
+                            <string>None</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="Line" name="line_7">
+                           <property name="orientation">
+                            <enum>Qt::Vertical</enum>
+                           </property>
+                          </widget>
+                         </item>
+                         <item alignment="Qt::AlignHCenter">
+                          <widget class="QLabel" name="label_deals_allTime">
+                           <property name="styleSheet">
+                            <string notr="true">color:rgba(255,255,255,1);
+font-weight:bold;
+font-size:15px;
+background-color:None;
+margin-left:4px;
+border:none;
+border-radius:7px;</string>
+                           </property>
+                           <property name="text">
+                            <string>None</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <widget class="Line" name="line_3">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                        </widget>
+                       </item>
+                       <item alignment="Qt::AlignHCenter">
+                        <widget class="QLabel" name="label_take">
+                         <property name="maximumSize">
+                          <size>
+                           <width>16777215</width>
+                           <height>30</height>
+                          </size>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">color:rgba(255,255,255,1);
+font-weight:bold;
+font-size:15px;
+background-color:None;
+margin-left:4px;
+border:none;
+border-radius:7px;</string>
+                         </property>
+                         <property name="text">
+                          <string>Прибыль</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_take">
+                         <item alignment="Qt::AlignHCenter">
+                          <widget class="QLabel" name="label_take_days">
+                           <property name="styleSheet">
+                            <string notr="true">color:rgba(255,255,255,1);
+font-weight:bold;
+font-size:15px;
+background-color:None;
+margin-left:4px;
+border:none;
+border-radius:7px;</string>
+                           </property>
+                           <property name="text">
+                            <string>None</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="Line" name="line_9">
+                           <property name="orientation">
+                            <enum>Qt::Vertical</enum>
+                           </property>
+                          </widget>
+                         </item>
+                         <item alignment="Qt::AlignHCenter">
+                          <widget class="QLabel" name="label_take_allTime">
+                           <property name="styleSheet">
+                            <string notr="true">color:rgba(255,255,255,1);
+font-weight:bold;
+font-size:15px;
+background-color:None;
+margin-left:4px;
+border:none;
+border-radius:7px;</string>
+                           </property>
+                           <property name="text">
+                            <string>None</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <widget class="Line" name="line_4">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="label_editDays">
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>30</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>16777215</width>
+                           <height>30</height>
+                          </size>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">color:rgba(255,255,255,1);
+font-weight:bold;
+font-size:15px;
+background-color:None;
+margin-left:4px;
+margin-bottom:10px;
+border:none;
+border-radius:7px;</string>
+                         </property>
+                         <property name="text">
+                          <string>Изменения за день: None</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="Line" name="line_5">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="label_days_addTime">
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>25</height>
+                          </size>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">color:rgba(255,255,255,1);
+font-weight:bold;
+font-size:15px;
+background-color:None;
+margin-left:4px;
+margin-bottom:10px;
+border:none;
+border-radius:7px;</string>
+                         </property>
+                         <property name="text">
+                          <string>Дней с момента добавления: None</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="Line" name="line_6">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
                      </widget>
                     </item>
-                    <item>
+                    <item alignment="Qt::AlignBottom">
                      <widget class="QFrame" name="horizontalFrame_bt">
                       <property name="styleSheet">
                        <string notr="true">background-color:#404040;

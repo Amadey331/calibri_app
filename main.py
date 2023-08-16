@@ -12,7 +12,7 @@ from shutil import copy2
 
 from PySide6 import QtWidgets
 import PySide6.QtCore
-
+from PySide6 import QtWidgets,QtSql
 import PySide6.QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtSql import QSqlTableModel
@@ -38,7 +38,7 @@ from window.add_botWindow import Ui_AddbotWindow
 from window.add_APIWindow import Ui_AddapiWindow
 from connection import Data
 from connectionAPI import DataAPI
-
+from connection_bot import Bot_bd
 
 from datetime import datetime
 
@@ -75,6 +75,7 @@ class MainWindow(QMainWindow):
         # Создаём экземпляр класса для работы с бд
         
         self.conn = Data()
+        self.conn.create_main_table_bd()
         self.connApi = DataAPI()
         
         # self.ui.set(self.conn)
@@ -94,11 +95,18 @@ class MainWindow(QMainWindow):
     #     print("Копка223")
 
 
-
+    
         # Функция для сохранения бота в нужный каталог бд 
-    def copy_file(self , src , name):
-            copy2(src,f"database/bots/{name}_bot.py")
-            
+    def copy_file(self , src , name , date , balance):
+            os.mkdir(f"database/bots/{name}_dir")
+            copy2(src,f"database/bots/{name}_dir/{name}_bot.py")
+            with open (f"database/bots/{name}_dir/{name}_bot_info.txt" ,"w") as file:
+                  
+                  
+                  file.write(balance)
+            with open (f"database/bots/{name}_dir/{name}_bot_balance_now.txt" ,"w") as file:
+                  
+                  file.write(str(balance)) 
             return f"database/bots/{name}_bot.py"
 
 
@@ -155,11 +163,12 @@ class MainWindow(QMainWindow):
 
     def add_newBot(self):
             # Записть в базу данных
-            date = str(datetime.now())[:16]
+            date = str(datetime.now())[:19]
+            
             name_inst = self.ui_window.name_tool_enter.text()
             info_strategies = self.ui_window.info_stratege_enter.text()
             balance_bot = self.ui_window.balance_enter.text()
-            file_derictory = self.copy_file(self.ui_window.file_input_res.text(), self.ui_window.name_tool_enter.text())
+            file_derictory = self.copy_file(self.ui_window.file_input_res.text(), self.ui_window.name_tool_enter.text(), date ,balance_bot)
             type_burse = self.ui_window.select_item.currentText()
             name_burse = self.ui_window.select_burse.currentText()
 
@@ -170,9 +179,9 @@ class MainWindow(QMainWindow):
             bt_start = getattr(self.ui,  f"bt_start{name_inst}" )
             bt_update = getattr(self.ui,  f"bt_update{name_inst}" ) 
             bt_delete = getattr(self.ui,  f"bt_delete{name_inst}" ) 
-            self.ui.create_connection_bt(name_inst, bt_start, bt_delete, bt_update ,self.conn)
-            
-            
+            self.ui.create_connection_bot(name_inst, bt_start, bt_delete, bt_update ,self.conn)
+            self.conn.create_bot_table_deals(name_inst)
+            self.conn.create_bot_table_deals_Info(name_inst)
             
             self.new_window.close()
             

@@ -16,7 +16,7 @@ from cryptography.fernet import Fernet
 from binance.client import Client
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt, QThread, Signal)
+    QSize, QTime, QUrl, Qt, QThread, Signal, Slot)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
@@ -24,8 +24,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
     QMainWindow, QPushButton, QScrollArea, QSizePolicy,
     QVBoxLayout, QWidget,QTableView, QGroupBox, QTextBrowser,QMessageBox)
+from PySide6 import QtWidgets,QtSql
+from datetime import datetime
 from connection import Data
 
+from connection_bot import Bot_bd
 # Класс для обновления баланса в новом потоке 
 class CheckBalanceThread(QThread):
     balance_updated = Signal(str)
@@ -42,11 +45,15 @@ class CheckBalanceThread(QThread):
         api, secret  = api.decode('utf-8'), secret.decode('utf-8')
         # return line_api
         client = Client(api,secret)
-        acc_balance = client.futures_account_balance()
+        try:
+            acc_balance = client.futures_account_balance()
+        except:
+            print("Ошибка получения баланса")
         for check_balance in acc_balance:
             if check_balance["asset"] == "USDT":
                 usdt_balance = check_balance["balance"]
                 return(str(float('{:.3f}'.format(float(usdt_balance)))))   
+            
 # Получение информации о api из зашифрованного файла
     def get_api_binance(self):
         with open("database/ApiData.txt", "r") as file:
@@ -54,9 +61,55 @@ class CheckBalanceThread(QThread):
             list_split = first_lale.split(" ")[0].split("'")
             secret_key = self.get_secretKey()
             fernet = Fernet(secret_key)
+         
             return fernet.decrypt(bytes(list_split[1].encode('utf-8'))), fernet.decrypt(bytes(list_split[3].encode('utf-8')))
+#     получение секретного ключа из файла для дешифпрвки
+    def get_secretKey(self):
+        with open("database/key.txt", "r") as file:
+            first_lale = file.readline()
             
-    
+            return first_lale       
+#Класс для получения сделок 
+class CheckDealsThread(QThread):
+    deals_updated = Signal(list, float)
+
+    def __init__(self, name, parent=None):
+        super().__init__(parent)
+        self.name = name
+    def run(self):
+        deals , change_24h = self.chech_deals(self.name)
+        self.deals_updated.emit(deals, change_24h)
+
+    def chech_deals(self,name):
+        
+        api, secret = self.get_api_binance()
+        api, secret  = api.decode('utf-8'), secret.decode('utf-8')
+        # return line_api
+        client = Client(api,secret)
+        deals = client.futures_account_trades(symbol = name)
+        ticker = client.futures_ticker(symbol = name)
+        current_price = float(ticker['lastPrice'])
+        price_change_24h = float(ticker['priceChange'])
+        change_24h = (price_change_24h / current_price) * 100
+        list_for_info = []
+        for deal in deals:
+            l=[]
+            
+            l = [str(datetime.fromtimestamp(deal['time']/1000))[:-7],deal["side"],deal["price"], deal["qty"],deal["commission"],deal["realizedPnl"] ]
+            list_for_info.append(l)
+        
+        return list_for_info , change_24h
+
+# Получение информации о api из зашифрованного файла
+    def get_api_binance(self):
+        with open("database/ApiData.txt", "r") as file:
+            first_lale = file.readline()
+            list_split = first_lale.split(" ")[0].split("'")
+            secret_key = self.get_secretKey()
+            fernet = Fernet(secret_key)
+         
+            return fernet.decrypt(bytes(list_split[1].encode('utf-8'))), fernet.decrypt(bytes(list_split[3].encode('utf-8')))
+                
 #     получение секретного ключа из файла для дешифпрвки
     def get_secretKey(self):
         with open("database/key.txt", "r") as file:
@@ -72,6 +125,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowIcon(QIcon("img\icon4.png"))
         MainWindow.resize(1043, 720)
         MainWindow.setMinimumSize(QSize(800, 720))
+        MainWindow.setMaximumSize(QSize(1270, 35))
         MainWindow.setCursor(QCursor(Qt.ArrowCursor))
         MainWindow.setStyleSheet(u"background-color:#1E1E1E;\n"
 "font-family:Eirik Raudel;\n"
@@ -261,7 +315,7 @@ class Ui_MainWindow(object):
 #             return first_lale                    
 
         # Функция для конектов к кнопкам
-    def create_connection_bt(self,name_inst,bt_start,bt_delete, bt_update,conn):
+    def create_connection_bot(self,name_inst,bt_start,bt_delete, bt_update,conn):
     # bt_start = self.findChild(QPushButton, f"bt_start{name_inst}")
     # bt_start.clicked.connect(self.start_bot(name_inst,bt_start))
     # someone = Comunicate()
@@ -269,12 +323,147 @@ class Ui_MainWindow(object):
         
         bt_start.clicked.connect(partial(self.start_bot, name_inst, bt_start))
         bt_delete.clicked.connect(partial(self.delete_bot, name_inst, bt_start,conn))
-        bt_update.clicked.connect(partial(self.update_bot, name_inst))
+        bt_update.clicked.connect(partial(self.update_bot, name_inst, conn))
         # bt_start.clicked.connect(lambda  bt_start = bt_start, name_inst = name_inst: self.start_bot(bt_start, name_inst))       
 
 # функция для обновления всей информации о боте
-    def update_bot(self,name):
-        print(name)
+    def update_bot(self,name, conn):
+        bt_update_name = getattr(self,  f"bt_update{name}" )
+        bt_update_name.setEnabled(False)
+        self.upload_bd_deals(name,conn)
+        
+        # table_deals_name = getattr(self,  f"table_deals{name}" )  
+        # table_name = f"Bots_{name}_deals_info"
+        # self.model = QtSql.QSqlTableModel()
+        # self.model.setTable(table_name)
+        
+        
+        # self.model.select()
+        # table_deals_name.setModel(self.model)
+        
+    def upload_bd_deals(self, name, conn):
+        # Создаем экземпляр класса CheckDealsThread и передаем аргумент name
+        check_deals_thread = CheckDealsThread(name, parent=None)
+        setattr(self, f"check_deals_thread{name}",check_deals_thread)
+        check_deals_thread_name = getattr(self,  f"check_deals_thread{name}" ) 
+        # Подключаем сигнал deals_updated к слоту upload_deals_to_db
+        check_deals_thread_name.deals_updated.connect(partial(self.upload_deals_to_db, conn, name))
+
+        # Запускаем поток
+        check_deals_thread_name.start()
+
+    @Slot(list,float)  # Декоратор Slot используется для определения слотов (служебные методы PyQt/PySide)
+    def upload_deals_to_db(self, conn, name, deals_list, change24_h):
+        
+    
+        bt_update_name = getattr(self,  f"bt_update{name}" )
+        if len(deals_list) != 0:
+            # Обработка и добавление сделок в таблицу которая отображает сделки
+            conn.clear_bot_bd(name)
+            data_add_bot = conn.get_token_data(name)
+            data_add_bot_qdatetime = QDateTime.fromString(data_add_bot, "yyyy-MM-dd HH:mm:ss")
+            if len(deals_list) <=20:
+                for deal in deals_list:
+                    deal_time = QDateTime.fromString(deal[0], "yyyy-MM-dd HH:mm:ss")
+
+                    if deal_time.isValid() and deal_time > data_add_bot_qdatetime:                   
+                        conn.add_bot_deals(*tuple(deal), name)
+            else:
+                list_deals = list()
+                for i in range(-1,-21,-1):
+
+                    list_deals.append(deals_list[i])
+
+                list_deals.reverse() 
+
+                for deal in list_deals:
+                    deal_time = QDateTime.fromString(deal[0], "yyyy-MM-dd HH:mm:ss")
+
+                    if deal_time.isValid() and deal_time > data_add_bot_qdatetime:                
+                        conn.add_bot_deals(*tuple(deal), name)  
+            #  ///////////////////////////////////////////////////////
+            # Подключение бд к модели таблицы
+            table_deals_name = getattr(self,  f"table_deals{name}" )  
+            table_name = f"Bots_{name}_deals_info"
+            
+            self.model = QtSql.QSqlTableModel()
+            self.model.setTable(table_name)
+
+
+            self.model.select()
+            table_deals_name.setModel(self.model)
+            # Изменение цены за 24 часа
+            label_editDays_name = getattr(self,  f"label_editDays{name}" )
+            label_editDays_name.setText(f"Изменение за день:{str(round(change24_h,2))}%")    
+            # 
+            data_bot = datetime.strptime(conn.get_token_data(name), "%Y-%m-%d %H:%M:%S")
+            current_data = datetime.now()
+            time_pass = current_data - data_bot
+
+            label_days_addTime_name = getattr(self,  f"label_days_addTime{name}" )
+            label_days_addTime_name.setText(f"Дней с момента добавления:{str(time_pass.days)}")
+            
+            
+            
+
+            
+            # Обработка информации (которая справа от виджета бота) для таблицы со всеми сделками за всё время
+            # data_add_bot_datetime = datetime.strptime(data_add_bot, "%Y-%m-%d %H:%M:%S")
+            
+            for deal in deals_list:
+                
+                deal_time = QDateTime.fromString(deal[0], "yyyy-MM-dd HH:mm:ss")
+
+                if deal_time.isValid() and deal_time > data_add_bot_qdatetime:
+                    conn.add_deals_forInfo(*tuple(deal), name, deal[0])
+                    
+                # if deal_time > data_add_bot:
+                
+
+            # изменение строки прибыли за всё время
+            pnl_allTime = conn.get_all_pnl(name)
+            if type(pnl_allTime) == str:
+                pnl_allTime = 0.0
+            label_take_allTime_name = getattr(self,  f"label_take_allTime{name}" )
+            label_take_allTime_name.setText(f"{pnl_allTime}$")
+            
+
+            # Изменение строки прибыли за этот день
+
+            pnlDay = conn.get_day_pnl(name)
+            label_take_days_name = getattr(self,  f"label_take_days{name}" )
+            label_take_days_name.setText(f"{str(pnlDay)}$")
+            # Изменение строки количество сделок за всё время 
+            positive_count_allTime, negative_count_allTIme = conn.get_positive_negative_pnl_sum(name)
+            count_deals_allTime = positive_count_allTime + negative_count_allTIme
+            label_deals_allTime_name = getattr(self,  f"label_deals_allTime{name}" )
+            label_deals_allTime_name.setText(str(count_deals_allTime))
+            
+            # Изменение строки количества сделок за день
+            positive_count_day, negative_count_day = conn.get_positive_negative_pnl_sum_today(name)
+            label_deals_days_name = getattr(self,  f"label_deals_days{name}" )
+            count_deals_day = positive_count_day + negative_count_day
+            label_deals_days_name.setText(str(count_deals_day))
+            
+            #Редактирование баланса бота после всех обновлений 
+            token_balance = float(conn.get_token_balance(name))
+            
+            current_balance_bot = token_balance + pnl_allTime
+            balance_bot_now_name = getattr(self, f"balance_bot_now{name}" )
+            balance_bot_now_name.setText(f"{str(current_balance_bot)}$") 
+            with open (f"database/bots/{name}_dir/{name}_bot_balance_now.txt" ,"w") as file:
+                  
+                  file.write(str(current_balance_bot))            
+            # Возвращение кнопки в активацию
+            bt_update_name.setEnabled(True)
+
+
+
+
+
+        else:
+            bt_update_name.setEnabled(True)
+            QMessageBox.critical(self.msg, '!', "По этому инструменту ещё не было сделок!")
 
 # Функция для удаления бота как виджет и из базы данных
 
@@ -290,8 +479,46 @@ class Ui_MainWindow(object):
             
             bot_widget_name.deleteLater()
             conn.delete_bot(name)
+            self.delete_file_bot(name)
+            self.delete_bot_table_deals(name)
+            self.delete_bot_table_All_deals(name)
 
 
+# Удаление таблицы для отображения информции со всеми сделками из базы данных
+    def delete_bot_table_All_deals(self, name):
+        # Добавляем префикс с именем бота к имени таблицы
+        table_name = f"Bots_{name}_All_deals_info"
+        query = QtSql.QSqlQuery()
+        if query.exec(f"DROP TABLE IF EXISTS {table_name}"):
+            return True
+        else:
+            error_msg = query.lastError().text()
+            print(f"Ошибка удаления таблицы: {error_msg}")
+            return False            
+
+# Удаление таблицы со сделками из базы данных
+    def delete_bot_table_deals(self, name):
+        # Добавляем префикс с именем бота к имени таблицы
+        table_name = f"Bots_{name}_deals_info"
+        query = QtSql.QSqlQuery()
+        if query.exec(f"DROP TABLE IF EXISTS {table_name}"):
+            return True
+        else:
+            error_msg = query.lastError().text()
+            print(f"Ошибка удаления таблицы: {error_msg}")
+            return False
+
+# Удаление файла бота из папки
+    def delete_file_bot(self,name):
+        dict_file_bot = os.path.join(os.getcwd(), 'database', 'bots',f"{name}_dir", f"{name}_bot.py")
+        dict_file_bot_info = os.path.join(os.getcwd(), 'database', 'bots',f"{name}_dir", f"{name}_bot_info.txt")
+        dict_file_bot_balance_now = os.path.join(os.getcwd(), 'database', 'bots',f"{name}_dir", f"{name}_bot_balance_now.txt")
+        os.remove(dict_file_bot)
+        os.remove(dict_file_bot_info)
+        if os.path.isfile(dict_file_bot_balance_now):
+            os.remove(dict_file_bot_balance_now)
+        
+        os.rmdir(f"database/bots/{name}_dir")
 
 
 #       Функция для старта файла
@@ -299,7 +526,7 @@ class Ui_MainWindow(object):
         print("Запущен", name)
         # print(self.__dict__)
         print(os.getcwd())
-        dict_file = os.path.join(os.getcwd(), 'database', 'bots', f"{name}_bot.py")
+        dict_file = os.path.join(os.getcwd(), 'database', 'bots',f"{name}_dir", f"{name}_bot.py")
         setattr(self, f"dict_file{name}", dict_file)
         # subprocess.call(f'database/bots/{self.inst_name}_bot.py')
         
@@ -316,7 +543,8 @@ class Ui_MainWindow(object):
         #     pro = subprocess.Popen(["python", dict_file], shell=True, start_new_session=True)
         
         #     Для того что бы видеть все данные с консолей ботов в главной консоле
-            pro = subprocess.Popen(["python", dict_file], )
+            venv_python_executable = os.path.join(os.getcwd(),"virtual", "Scripts", "python.exe")
+            pro = subprocess.Popen([venv_python_executable, dict_file], )
         #     pro = subprocess.Popen(["python", dict_file], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, creationflags=subprocess.CREATE_NEW_CONSOLE, start_new_session=True)
             
             setattr(self, f"shell_process{name}", pro)
@@ -364,7 +592,7 @@ class Ui_MainWindow(object):
             bt_start_name = getattr(self,  f"bt_start{name_inst}" )
             bt_delete_name = getattr(self,  f"bt_delete{name_inst}" )
             bt_update_name = getattr(self,  f"bt_update{name_inst}" ) 
-            self.create_connection_bt(name_inst,bt_start_name,bt_delete_name,bt_update_name,connection)
+            self.create_connection_bot(name_inst,bt_start_name,bt_delete_name,bt_update_name,connection)
             
             
         #     bt_start_name.clicked.connect(lambda i=info_bot, bt_start = bt_start_name: self.test(i, bt_start))
@@ -579,11 +807,17 @@ class Ui_MainWindow(object):
         table_deals = QTableView(bot_widget_name)
         table_deals.setObjectName(u"table_deals")
         table_deals.setStyleSheet(u"border:None;")
+
+        table_deals.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        table_deals.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        table_deals.State(QtWidgets.QAbstractItemView.NoState)
+        
         setattr(self, f"table_deals{name_inst}",table_deals)
         table_deals_name = getattr(self,  f"table_deals{name_inst}" )  
-
+        
+        
         verticalLayout_left_name.addWidget(table_deals_name)
-
+        
         Info_strat_line = QTextBrowser(bot_widget_name)
         Info_strat_line.setObjectName(u"Info_strat_line")
         Info_strat_line.setMaximumSize(QSize(16777215, 40))
@@ -611,14 +845,316 @@ class Ui_MainWindow(object):
         verticalLayout_5_name = getattr(self,  f"verticalLayout_5{name_inst}" ) 
 
 
-        tableView_stratInfo = QTableView(verticalGroupBox_right_name)
-        tableView_stratInfo.setObjectName(u"tableView_stratInfo")
-        tableView_stratInfo.setStyleSheet(u"border:none;")
-        setattr(self, f"tableView_stratInfo{name_inst}",tableView_stratInfo)
-        tableView_stratInfo_name = getattr(self,  f"tableView_stratInfo{name_inst}" ) 
 
 
-        verticalLayout_5_name.addWidget(tableView_stratInfo_name)
+        verticalGroupBox_Info_start = QGroupBox(verticalGroupBox_right_name)
+        verticalGroupBox_Info_start.setObjectName(u"verticalGroupBox_Info_start")
+        verticalGroupBox_Info_start.setMaximumSize(QSize(515, 16777215))
+        setattr(self, f"verticalGroupBox_Info_start{name_inst}",verticalGroupBox_Info_start)
+        verticalGroupBox_Info_start_name = getattr(self,  f"verticalGroupBox_Info_start{name_inst}" ) 
+
+
+        verticalLayout_4 = QVBoxLayout(verticalGroupBox_Info_start_name)
+        verticalLayout_4.setObjectName(u"verticalLayout_4")
+        setattr(self, f"verticalLayout_4{name_inst}",verticalLayout_4)
+        verticalLayout_4_name = getattr(self,  f"verticalLayout_4{name_inst}" )         
+
+
+        horizontalLayout_time = QHBoxLayout()
+        horizontalLayout_time.setObjectName(u"horizontalLayout_time")
+        setattr(self, f"horizontalLayout_time{name_inst}",horizontalLayout_time)
+        horizontalLayout_time_name = getattr(self,  f"horizontalLayout_time{name_inst}" )    
+
+        label_to_days = QLabel(verticalGroupBox_Info_start_name)
+        label_to_days.setObjectName(u"label_to_days")
+        label_to_days.setMinimumSize(QSize(0, 30))
+        label_to_days.setMaximumSize(QSize(16777215, 30))
+        label_to_days.setStyleSheet(u"color:rgba(255,255,255,1);\n"
+"font-weight:bold;\n"
+"font-size:15px;\n"
+"background-color:None;\n"
+"margin-left:4px;\n"
+"margin-bottom:10px;\n"
+"border:none;\n"
+"border-radius:7px;")
+        setattr(self, f"label_to_days{name_inst}",label_to_days)
+        label_to_days_name = getattr(self,  f"label_to_days{name_inst}" ) 
+
+
+        horizontalLayout_time_name.addWidget(label_to_days_name, 0, Qt.AlignHCenter|Qt.AlignTop)
+
+        line_8 = QFrame(verticalGroupBox_Info_start_name)
+        line_8.setObjectName(u"line_8")
+        line_8.setFrameShape(QFrame.VLine)
+        line_8.setFrameShadow(QFrame.Sunken)
+        setattr(self, f"line_8{name_inst}",line_8)
+        line_8_name = getattr(self,  f"line_8{name_inst}" )
+
+
+        horizontalLayout_time_name.addWidget(line_8_name)
+
+        label_all_time = QLabel(verticalGroupBox_Info_start_name)
+        label_all_time.setObjectName(u"label_all_time")
+        label_all_time.setMinimumSize(QSize(0, 30))
+        label_all_time.setMaximumSize(QSize(16777215, 30))
+        label_all_time.setStyleSheet(u"color:rgba(255,255,255,1);\n"
+"font-weight:bold;\n"
+"font-size:15px;\n"
+"background-color:None;\n"
+"margin-left:4px;\n"
+"margin-bottom:10px;\n"
+"border:none;\n"
+"border-radius:7px;")
+        setattr(self, f"label_all_time{name_inst}",label_all_time)
+        label_all_time_name = getattr(self,  f"label_all_time{name_inst}" )
+
+
+
+        horizontalLayout_time_name.addWidget(label_all_time_name, 0, Qt.AlignHCenter)
+
+        # verticalLayout_4_name.setLayout(horizontalLayout_time_name)
+        verticalLayout_4_name.addLayout(horizontalLayout_time_name)
+
+        line = QFrame(verticalGroupBox_Info_start_name)
+        line.setObjectName(u"line")
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+
+        setattr(self, f"line{name_inst}",line)
+        line_name = getattr(self,  f"line{name_inst}" )
+
+
+
+        verticalLayout_4_name.addWidget(line_name)
+
+        label_deals = QLabel(verticalGroupBox_Info_start_name)
+        label_deals.setObjectName(u"label_deals")
+        label_deals.setMaximumSize(QSize(16777215, 30))
+        label_deals.setStyleSheet(u"color:rgba(255,255,255,1);\n"
+"font-weight:bold;\n"
+"font-size:15px;\n"
+"background-color:None;\n"
+"margin-left:4px;\n"
+"border:none;\n"
+"border-radius:7px;")
+
+        setattr(self, f"label_deals{name_inst}",label_deals)
+        label_deals_name = getattr(self,  f"label_deals{name_inst}" )
+
+        verticalLayout_4_name.addWidget(label_deals_name, 0, Qt.AlignHCenter)
+
+        horizontalLayout_deals = QHBoxLayout()
+        horizontalLayout_deals.setObjectName(u"horizontalLayout_deals")
+        setattr(self, f"horizontalLayout_deals{name_inst}",horizontalLayout_deals)
+        horizontalLayout_deals_name = getattr(self,  f"horizontalLayout_deals{name_inst}" )
+
+        
+        label_deals_days = QLabel(verticalGroupBox_Info_start_name)
+        label_deals_days.setObjectName(u"label_deals_days")
+        label_deals_days.setMaximumSize(QSize(16777215, 30))
+        label_deals_days.setStyleSheet(u"color:rgba(255,255,255,1);\n"
+"font-weight:bold;\n"
+"font-size:15px;\n"
+"background-color:None;\n"
+"margin-left:4px;\n"
+"border:none;\n"
+"border-radius:7px;")
+        setattr(self, f"label_deals_days{name_inst}",label_deals_days)
+        label_deals_days_name = getattr(self,  f"label_deals_days{name_inst}" )
+
+
+        horizontalLayout_deals_name.addWidget(label_deals_days_name, 0, Qt.AlignHCenter)
+
+        line_7 = QFrame(verticalGroupBox_Info_start_name)
+        line_7.setObjectName(u"line_7")
+        line_7.setFrameShape(QFrame.VLine)
+        line_7.setFrameShadow(QFrame.Sunken)
+
+        setattr(self, f"line_7{name_inst}",line_7)
+        line_7_name = getattr(self,  f"line_7{name_inst}" )
+
+        horizontalLayout_deals_name.addWidget(line_7_name)
+
+        label_deals_allTime = QLabel(verticalGroupBox_Info_start_name)
+        label_deals_allTime.setObjectName(u"label_deals_allTime")
+        label_deals_allTime.setStyleSheet(u"color:rgba(255,255,255,1);\n"
+"font-weight:bold;\n"
+"font-size:15px;\n"
+"background-color:None;\n"
+"margin-left:4px;\n"
+"border:none;\n"
+"border-radius:7px;")
+
+        setattr(self, f"label_deals_allTime{name_inst}",label_deals_allTime)
+        label_deals_allTime_name = getattr(self,  f"label_deals_allTime{name_inst}" )
+
+        horizontalLayout_deals_name.addWidget(label_deals_allTime_name, 0, Qt.AlignHCenter)
+
+
+        verticalLayout_4_name.addLayout(horizontalLayout_deals_name)
+
+        line_3 = QFrame(verticalGroupBox_Info_start_name)
+        line_3.setObjectName(u"line_3")
+        line_3.setFrameShape(QFrame.HLine)
+        line_3.setFrameShadow(QFrame.Sunken)
+
+        setattr(self, f"line_3{name_inst}",line_3)
+        line_3_name = getattr(self,  f"line_3{name_inst}" )
+
+
+        verticalLayout_4_name.addWidget(line_3_name)
+
+        label_take = QLabel(verticalGroupBox_Info_start_name)
+        label_take.setObjectName(u"label_take")
+        label_take.setMaximumSize(QSize(16777215, 30))
+        label_take.setStyleSheet(u"color:rgba(255,255,255,1);\n"
+"font-weight:bold;\n"
+"font-size:15px;\n"
+"background-color:None;\n"
+"margin-left:4px;\n"
+"border:none;\n"
+"border-radius:7px;")
+
+        setattr(self, f"label_take{name_inst}",label_take)
+        label_take_name = getattr(self,  f"label_take{name_inst}" )
+
+
+        verticalLayout_4_name.addWidget(label_take_name, 0, Qt.AlignHCenter)
+
+        horizontalLayout_take = QHBoxLayout()
+        horizontalLayout_take.setObjectName(u"horizontalLayout_take")
+        setattr(self, f"horizontalLayout_take{name_inst}",horizontalLayout_take)
+        horizontalLayout_take_name = getattr(self,  f"horizontalLayout_take{name_inst}" )
+
+
+        label_take_days = QLabel(verticalGroupBox_Info_start_name)
+        label_take_days.setObjectName(u"label_take_days")
+        label_take_days.setStyleSheet(u"color:rgba(255,255,255,1);\n"
+"font-weight:bold;\n"
+"font-size:15px;\n"
+"background-color:None;\n"
+"margin-left:4px;\n"
+"border:none;\n"
+"border-radius:7px;")
+
+        setattr(self, f"label_take_days{name_inst}",label_take_days)
+        label_take_days_name = getattr(self,  f"label_take_days{name_inst}" )
+
+
+        horizontalLayout_take_name.addWidget(label_take_days_name, 0, Qt.AlignHCenter)
+
+        line_9 = QFrame(verticalGroupBox_Info_start_name)
+        line_9.setObjectName(u"line_9")
+        line_9.setFrameShape(QFrame.VLine)
+        line_9.setFrameShadow(QFrame.Sunken)
+
+        setattr(self, f"line_9{name_inst}",line_9)
+        line_9_name = getattr(self,  f"line_9{name_inst}" )
+
+        horizontalLayout_take_name.addWidget(line_9_name)
+
+        label_take_allTime = QLabel(verticalGroupBox_Info_start_name)
+        label_take_allTime.setObjectName(u"label_take_allTime")
+        label_take_allTime.setStyleSheet(u"color:rgba(255,255,255,1);\n"
+"font-weight:bold;\n"
+"font-size:15px;\n"
+"background-color:None;\n"
+"margin-left:4px;\n"
+"border:none;\n"
+"border-radius:7px;")
+        
+        setattr(self, f"label_take_allTime{name_inst}",label_take_allTime)
+        label_take_allTime_name = getattr(self,  f"label_take_allTime{name_inst}" )
+
+        horizontalLayout_take_name.addWidget(label_take_allTime_name, 0, Qt.AlignHCenter)
+
+
+        verticalLayout_4_name.addLayout(horizontalLayout_take_name)
+
+        line_4 = QFrame(verticalGroupBox_Info_start_name)
+        line_4.setObjectName(u"line_4")
+        line_4.setFrameShape(QFrame.HLine)
+        line_4.setFrameShadow(QFrame.Sunken)
+
+        setattr(self, f"line_4{name_inst}",line_4)
+        line_4_name = getattr(self,  f"line_4{name_inst}" )
+
+        verticalLayout_4_name.addWidget(line_4_name)
+
+        label_editDays = QLabel(verticalGroupBox_Info_start_name)
+        label_editDays.setObjectName(u"label_editDays")
+        label_editDays.setMinimumSize(QSize(0, 30))
+        label_editDays.setMaximumSize(QSize(16777215, 30))
+        label_editDays.setStyleSheet(u"color:rgba(255,255,255,1);\n"
+"font-weight:bold;\n"
+"font-size:13px;\n"
+"background-color:None;\n"
+"margin-left:4px;\n"
+"margin-bottom:10px;\n"
+"border:none;\n"
+"border-radius:7px;")
+
+        setattr(self, f"label_editDays{name_inst}",label_editDays)
+        label_editDays_name = getattr(self,  f"label_editDays{name_inst}" )
+
+        verticalLayout_4_name.addWidget(label_editDays_name)
+
+        line_5 = QFrame(verticalGroupBox_Info_start_name)
+        line_5.setObjectName(u"line_5")
+        line_5.setFrameShape(QFrame.HLine)
+        line_5.setFrameShadow(QFrame.Sunken)
+
+        setattr(self, f"line_5{name_inst}",line_5)
+        line_5_name = getattr(self,  f"line_5{name_inst}" )
+
+
+        verticalLayout_4_name.addWidget(line_5_name)
+
+        label_days_addTime = QLabel(verticalGroupBox_Info_start_name)
+        label_days_addTime.setObjectName(u"label_days_addTime")
+        label_days_addTime.setMinimumSize(QSize(0, 25))
+        label_days_addTime.setStyleSheet(u"color:rgba(255,255,255,1);\n"
+"font-weight:bold;\n"
+"font-size:13px;\n"
+"background-color:None;\n"
+"margin-left:4px;\n"
+"margin-bottom:10px;\n"
+"border:none;\n"
+"border-radius:7px;")
+
+        setattr(self, f"label_days_addTime{name_inst}",label_days_addTime)
+        label_days_addTime_name = getattr(self,  f"label_days_addTime{name_inst}" )
+
+        verticalLayout_4_name.addWidget(label_days_addTime_name)
+
+        line_6 = QFrame(verticalGroupBox_Info_start_name)
+        line_6.setObjectName(u"line_6")
+        line_6.setFrameShape(QFrame.HLine)
+        line_6.setFrameShadow(QFrame.Sunken)
+
+        setattr(self, f"line_6{name_inst}",line_6)
+        line_6_name = getattr(self,  f"line_6{name_inst}" )
+
+        verticalLayout_4_name.addWidget(line_6_name)
+
+
+        verticalLayout_5_name.addWidget(verticalGroupBox_Info_start_name)
+
+
+
+
+
+
+
+
+        # tableView_stratInfo = QTableView(verticalGroupBox_right_name)
+        # tableView_stratInfo.setObjectName(u"tableView_stratInfo")
+        # tableView_stratInfo.setStyleSheet(u"border:none;")
+        # setattr(self, f"tableView_stratInfo{name_inst}",tableView_stratInfo)
+        # tableView_stratInfo_name = getattr(self,  f"tableView_stratInfo{name_inst}" ) 
+
+
+        # verticalLayout_5_name.addWidget(tableView_stratInfo_name)
 
         horizontalFrame_bt = QFrame(verticalGroupBox_right_name)
         horizontalFrame_bt.setObjectName(u"horizontalFrame_bt")
@@ -774,7 +1310,7 @@ class Ui_MainWindow(object):
         inst_name_name.setText(QCoreApplication.translate("MainWindow", f"{name_inst}", None))
         label_type_burse_name.setText(QCoreApplication.translate("MainWindow", f"{type_burse}", None))
         label_name_burse_name.setText(QCoreApplication.translate("MainWindow", f"{name_burse}", None))
-        balance_bot_now_name.setText(QCoreApplication.translate("MainWindow", f"{balance_bot} $", None))
+        balance_bot_now_name.setText(QCoreApplication.translate("MainWindow", f"None", None))
         balance_bot_be_name.setText(QCoreApplication.translate("MainWindow", f"{balance_bot} $", None))
         # self.date_info.setText(QCoreApplication.translate("MainWindow", u"\u0414\u0430\u0442\u0430 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0438\u044f:14.02.2022", None))
         date_info_name.setText(QCoreApplication.translate("MainWindow", f"{date}", None))
@@ -789,6 +1325,17 @@ class Ui_MainWindow(object):
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Eirik Raudel'; font-size:15px; font-weight:400; font-style:normal;\">\n"
 f"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:15px; font-weight:bold; color:#ffffff;\">{info_strategies}</span></p></body></html>", None))
+        label_to_days_name.setText(QCoreApplication.translate("MainWindow", u"\u0417\u0430 \u0434\u0435\u043d\u044c", None))
+        label_all_time_name.setText(QCoreApplication.translate("MainWindow", u"\u0417\u0430 \u0432\u0441\u0451 \u0432\u0440\u0435\u043c\u044f", None))
+        label_deals_name.setText(QCoreApplication.translate("MainWindow", u"\u0421\u0434\u0435\u043b\u043a\u0438", None))
+        label_deals_days_name.setText(QCoreApplication.translate("MainWindow", u"None", None))
+        label_deals_allTime_name.setText(QCoreApplication.translate("MainWindow", u"None", None))
+        label_take_name.setText(QCoreApplication.translate("MainWindow", u"\u041f\u0440\u0438\u0431\u044b\u043b\u044c", None))
+        label_take_days_name.setText(QCoreApplication.translate("MainWindow", u"None", None))
+        label_take_allTime_name.setText(QCoreApplication.translate("MainWindow", u"None", None))
+        label_editDays_name.setText(QCoreApplication.translate("MainWindow", u"\u0418\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f \u0437\u0430 \u0434\u0435\u043d\u044c: None", None))        
+        label_days_addTime_name.setText(QCoreApplication.translate("MainWindow", u"\u0414\u043d\u0435\u0439 \u0441 \u043c\u043e\u043c\u0435\u043d\u0442\u0430 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0438\u044f: None", None))
+        
         bt_start_name.setText(QCoreApplication.translate("MainWindow", u"\u0417\u0430\u043f\u0443\u0441\u0442\u0438\u0442\u044c", None))
         bt_update_name.setText(QCoreApplication.translate("MainWindow", u"\u041e\u0431\u043d\u043e\u0432\u0438\u0442\u044c", None))
         bt_delete_name.setText(QCoreApplication.translate("MainWindow", u"\u0423\u0434\u0430\u043b\u0438\u0442\u044c", None))
