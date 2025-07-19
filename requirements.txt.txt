@@ -1,0 +1,4 @@
+PySide6==6.7.0
+cryptography==42.0.5
+psutil==5.9.8
+binance==0.3 
